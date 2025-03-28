@@ -1,0 +1,141 @@
+module PS2_KeyboardController (
+    input  wire clk,         // system clock (e.g., 50 MHz)
+    input  wire rstn,        // active-low reset
+
+    // PS/2 physical lines
+    input  wire ps2_clk,     // from keyboard
+    input  wire ps2_data,    // from keyboard
+
+    // Outputs for Pong
+    output reg left_up,      // W
+    output reg left_down,    // S
+    output reg right_up,     // I
+    output reg right_down    // K
+);
+
+    //------------------------------------------
+    // 1) PS/2 signal synchronization
+    //------------------------------------------
+    // We should synchronize ps2_clk, ps2_data into the FPGA clock domain.
+    // Then detect falling edges of ps2_clk_sync to read data bits.
+    reg [2:0] ps2_clk_sync;
+    reg [2:0] ps2_data_sync;
+
+    always @(posedge clk or negedge rstn) begin
+        if (!rstn) begin
+            ps2_clk_sync  <= 3'b111;
+            ps2_data_sync <= 3'b111;
+        end else begin
+            ps2_clk_sync  <= {ps2_clk_sync[1:0], ps2_clk};
+            ps2_data_sync <= {ps2_data_sync[1:0], ps2_data};
+        end
+    end
+
+    wire ps2_clk_filtered  = ps2_clk_sync[2];
+    wire ps2_data_filtered = ps2_data_sync[2];
+
+    // Detect falling edge of ps2_clk_filtered
+    reg ps2_clk_old;
+    wire clk_falling_edge;
+    always @(posedge clk or negedge rstn) begin
+        if (!rstn)
+            ps2_clk_old <= 1'b1;
+        else
+            ps2_clk_old <= ps2_clk_filtered;
+    end
+    assign clk_falling_edge = (ps2_clk_old == 1'b1) && (ps2_clk_filtered == 1'b0);
+
+    //------------------------------------------
+    // 2) Shift register to collect scan code bits
+    //------------------------------------------
+    reg [10:0] shift_reg;
+    reg  [3:0] bit_count;
+    wire       frame_done = (bit_count == 4'd10); // 11 bits total: start,8data,parity,stop
+
+    always @(posedge clk or negedge rstn) begin
+        if (!rstn) begin
+            shift_reg <= 11'b0;
+            bit_count <= 4'b0;
+        end else begin
+            if (clk_falling_edge) begin
+                shift_reg <= {ps2_data_filtered, shift_reg[10:1]};
+                if (bit_count == 4'd10)
+                    bit_count <= 0;
+                else
+                    bit_count <= bit_count + 1;
+            end
+        end
+    end
+
+    //------------------------------------------
+    // 3) Scan code extraction
+    //------------------------------------------
+    // After we collect 11 bits, bits [8:1] are data, ignoring
+    // start bit (shift_reg[0]), parity (shift_reg[9]), and stop (shift_reg[10]).
+    reg [7:0] scan_code;
+    reg       scan_ready;
+
+    always @(posedge clk or negedge rstn) begin
+        if (!rstn) begin
+            scan_code  <= 8'h00;
+            scan_ready <= 1'b0;
+        end else begin
+            scan_ready <= 1'b0;
+            if (frame_done) begin
+                // shift_reg = [stop][parity][data7..0][start]
+                // data = shift_reg[8:1]
+                scan_code  <= shift_reg[8:1];
+                scan_ready <= 1'b1;
+            end
+        end
+    end
+
+    //------------------------------------------
+    // 4) Track make/break + store pressed keys
+    //------------------------------------------
+    // PS/2 set 1:
+    //   - MAKE code = 1 byte (e.g., 0x1D for W) 
+    //   - BREAK code = 0xF0 followed by that same code
+    // We'll keep flags for each of W, S, I, K.
+    reg break_flag;
+    always @(posedge clk or negedge rstn) begin
+        if (!rstn) begin
+            break_flag <= 1'b0;
+            left_up    <= 1'b0; // W
+            left_down  <= 1'b0; // S
+            right_up   <= 1'b0; // I
+            right_down <= 1'b0; // K
+        end else begin
+            if (scan_ready) begin
+                if (scan_code == 8'hF0) begin
+                    // next code will be a break code
+                    break_flag <= 1'b1;
+                end
+                else begin
+                    // Normal code
+                    if (break_flag) begin
+                        // Key is being released
+                        case (scan_code)
+                            8'h1D: left_up    <= 1'b0; // W
+                            8'h1B: left_down  <= 1'b0; // S
+                            8'h43: right_up   <= 1'b0; // I
+                            8'h42: right_down <= 1'b0; // K
+                            default: ;
+                        endcase
+                        break_flag <= 1'b0;
+                    end else begin
+                        // Key is being pressed (make code)
+                        case (scan_code)
+                            8'h1D: left_up    <= 1'b1; // W
+                            8'h1B: left_down  <= 1'b1; // S
+                            8'h43: right_up   <= 1'b1; // I
+                            8'h42: right_down <= 1'b1; // K
+                            default: ;
+                        endcase
+                    end
+                end
+            end
+        end
+    end
+
+endmodule
