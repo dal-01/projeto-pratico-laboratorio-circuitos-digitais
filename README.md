@@ -1,4 +1,4 @@
-#jogo-circuitos-digitais
+##jogo-circuitos-digitais
 
 ## Introdução  
 O projeto consiste na criação de um jogo para ser jogado por dois jogadores em uma plataforma FPGA. O jogo envolve a movimentação de dois retângulos, representando os goleiros, e uma bola que rebate nos goleiros e vai em direção ao gol do oponente. A lógica de movimentação, detecção de colisões e contagem de pontos foi implementada utilizando Verilog, uma linguagem de descrição de hardware. O projeto foi desenvolvido para ser simulado em plataformas de prototipagem de circuitos digitais.
