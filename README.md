@@ -1,4 +1,4 @@
-# Hardware Pong 🎮⚡
+# Hardware Pong 🎮
 
 Uma versão funcional do clássico **Pong**, desenvolvida em **Verilog** para plataformas **FPGA**. Criado como projeto da disciplina de **Circuitos Digitais**, o jogo simula um embate entre dois jogadores que controlam "raquetes" em tempo real, com lógica digital para movimentação, colisões e contagem de pontos.
 
@@ -74,7 +74,7 @@ Com este projeto, é possível:
 
 ---
 
-## ✨ Resultado Esperado
+## Resultado Esperado
 
 O `hardware-pong` entrega uma experiência interativa, divertida e educativa, sendo ideal para consolidar o aprendizado de lógica digital e sistemas embarcados. Os jogadores podem interagir em tempo real por meio de botões físicos, enquanto o circuito se encarrega de renderizar e controlar o jogo com precisão.
 
