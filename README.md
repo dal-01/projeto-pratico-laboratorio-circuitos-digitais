@@ -82,12 +82,6 @@ O `hardware-pong` entrega uma experiência interativa, divertida e educativa, se
 
 ---
 
-## 📸 Imagens e Demonstrações
-
-> *(Adicione aqui capturas de tela da simulação no GTKWave ou vídeos/fotos rodando na FPGA)*
-
----
-
 ## 📜 Licença
 
 Distribuído sob a licença [MIT](LICENSE).  
@@ -102,5 +96,5 @@ Abra uma *issue* com sugestões ou envie um *pull request* com melhorias.
 
 ---
 
-🛠 Desenvolvido para a disciplina de **Circuitos Digitais** — Universidade Federal de Lavras (UFLA)  
+🛠 Desenvolvido para a disciplina de **Laboratório de Circuitos Digitais** — Universidade Federal de Lavras (UFLA)  
 👨‍💻 Autor: [Diego Oliveira](https://github.com/diegocodehub)
