@@ -85,16 +85,20 @@ O `hardware-pong` entrega uma experiência interativa, divertida e educativa, se
 ## 📜 Licença
 
 Distribuído sob a licença [MIT](LICENSE).  
-Sinta-se à vontade para estudar, modificar, aprimorar e utilizar o projeto como desejar.
+Sinta-se à vontade para estudar, modificar, aprimorar e utilizar este projeto como desejar.
 
 ---
 
 ## 🤝 Contribuindo
 
 Contribuições são bem-vindas!  
-Abra uma *issue* com sugestões ou envie um *pull request* com melhorias.
+Abra uma *issue* com sugestões, relate problemas ou envie um *pull request* com melhorias.
 
 ---
 
-🛠 Desenvolvido para a disciplina de **Laboratório de Circuitos Digitais** — Universidade Federal de Lavras (UFLA)  
-👨‍💻 Autor: [Diego Oliveira](https://github.com/diegocodehub)
+👨‍💻 Desenvolvido por **Diego Oliveira** — Universidade Federal de Lavras (UFLA)  
+🔗 GitHub: [https://github.com/diegocodehub](https://github.com/diegocodehub)
+
+---
+
+> 💡 *"Soluções simples para problemas complexos começam com boas estruturas de dados."*
